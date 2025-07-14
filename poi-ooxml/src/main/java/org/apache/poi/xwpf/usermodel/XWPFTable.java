@@ -288,6 +288,19 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         return tblPr.isSetTblW() ? (int)Units.toDXA(POIXMLUnits.parseLength(tblPr.getTblW().xgetW())) : -1;
     }
 
+    /**
+     * Get the indentation value in 20ths of a point (twips).
+     *
+     * <p>This element specifies the indentation which shall be added before the leading edge of
+     * the current table in the document (the left edge in a left-to-right table, and the right
+     * edge in a right-to-left table).</p>
+     * <p>If this element is omitted, then the table shall inherit the table indentation from the
+     * associated table style. If table indentation is never specified in the style hierarchy, no
+     * indentation shall be added to the parent table. If the table alignment is not left/start,
+     * this property shall be ignored.</p>
+     *
+     * @return indentation value as an integer (20ths of a point)
+     */
     public int getIndent() {
         CTTblPr tblPr = getTblPr();
         if (tblPr.isSetTblInd()) {
