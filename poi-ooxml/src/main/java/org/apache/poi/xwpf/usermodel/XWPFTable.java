@@ -289,6 +289,24 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     }
 
     /**
+     * Set the width in 20ths of a point (twips).
+     * @param width Width value (20ths of a point)
+     */
+    public void setWidth(int width) {
+        CTTblPr tblPr = getTblPr();
+        CTTblWidth tblWidth = tblPr.isSetTblW() ? tblPr.getTblW() : tblPr.addNewTblW();
+        tblWidth.setW(new BigInteger(Integer.toString(width)));
+        tblWidth.setType(STTblWidth.DXA);
+    }
+
+    /**
+     * @return number of rows in table
+     */
+    public int getNumberOfRows() {
+        return ctTbl.sizeOfTrArray();
+    }
+
+    /**
      * Get the indentation value in 20ths of a point (twips).
      *
      * <p>This element specifies the indentation which shall be added before the leading edge of
@@ -360,24 +378,6 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         if (tPr != null && tPr.isSetTblInd()) {
             tPr.unsetTblInd();
         }
-    }
-
-    /**
-     * Set the width in 20ths of a point (twips).
-     * @param width Width value (20ths of a point)
-     */
-    public void setWidth(int width) {
-        CTTblPr tblPr = getTblPr();
-        CTTblWidth tblWidth = tblPr.isSetTblW() ? tblPr.getTblW() : tblPr.addNewTblW();
-        tblWidth.setW(new BigInteger(Integer.toString(width)));
-        tblWidth.setType(STTblWidth.DXA);
-    }
-
-    /**
-     * @return number of rows in table
-     */
-    public int getNumberOfRows() {
-        return ctTbl.sizeOfTrArray();
     }
 
     /**
