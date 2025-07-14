@@ -353,6 +353,16 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     }
 
     /**
+     * Removes the table indentation attribute from a table
+     */
+    public void removeIndent() {
+        CTTblPr tPr = getTblPr(false);
+        if (tPr != null && tPr.isSetTblInd()) {
+            tPr.unsetTblInd();
+        }
+    }
+
+    /**
      * Set the width in 20ths of a point (twips).
      * @param width Width value (20ths of a point)
      */

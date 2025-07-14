@@ -641,6 +641,9 @@ class TestXWPFTable {
             tbl.setIndent(-100);
             assertTrue(tbl.isSetIndent());
             assertEquals(-100, tbl.getIndent());
+            tbl.removeIndent();
+            assertFalse(tbl.isSetIndent());
+            assertEquals(0, tbl.getIndent());
         }
     }
 }
