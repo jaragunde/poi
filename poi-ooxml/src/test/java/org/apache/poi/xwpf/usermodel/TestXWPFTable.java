@@ -594,7 +594,7 @@ class TestXWPFTable {
 
             XWPFTable table1 = doc.getTableArray(0);
             // Indent not present in the document
-            assertEquals(-1, table1.getIndent());
+            assertEquals(0, table1.getIndent());
 
             XWPFTable table2 = doc.getTableArray(1);
             // Valid indent value with type dxa
@@ -606,11 +606,11 @@ class TestXWPFTable {
 
             XWPFTable table4 = doc.getTableArray(3);
             // Indent is of type "pct" which should be ignored
-            assertEquals(-1, table4.getIndent());
+            assertEquals(0, table4.getIndent());
 
             XWPFTable table5 = doc.getTableArray(4);
             // Indent is of type "auto" which should be ignored
-            assertEquals(-1, table5.getIndent());
+            assertEquals(0, table5.getIndent());
 
             XWPFTable table6 = doc.getTableArray(5);
             // Valid indent value with empty type (defaults to dxa)

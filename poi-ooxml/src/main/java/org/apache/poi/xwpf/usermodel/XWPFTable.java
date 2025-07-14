@@ -297,19 +297,19 @@ public class XWPFTable implements IBodyElement, ISDTContents {
                 typeValue = STTblWidth.DXA;
             }
             switch (typeValue.intValue()) {
+                case STTblWidth.INT_DXA:
+                    return (int) Units.toDXA(POIXMLUnits.parseLength(tblPr.getTblInd().xgetW()));
                 case STTblWidth.INT_NIL:
                     // "§17.18.90: [nil] Specifies that the current width is zero, regardless of
                     // any width value specified on the parent element"
                     return 0;
-                case STTblWidth.INT_DXA:
-                    return (int) Units.toDXA(POIXMLUnits.parseLength(tblPr.getTblInd().xgetW()));
                 case STTblWidth.INT_PCT:
                 case STTblWidth.INT_AUTO:
                     // "§17.4.50: Any width value of type pct or auto for this element shall be ignored"
-                    return -1;
+                    return 0;
             }
         }
-        return -1;
+        return 0;
     }
 
     /**
