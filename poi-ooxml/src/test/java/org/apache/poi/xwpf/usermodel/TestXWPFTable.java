@@ -586,4 +586,39 @@ class TestXWPFTable {
             assertNull(tbl.getTableAlignment());
         }
     }
+
+    @Test
+    public void testGetTableIndent() throws Exception {
+        // open an empty document
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("table-indent.docx")) {
+
+            XWPFTable table1 = doc.getTableArray(0);
+            // Indent not present in the document
+            assertEquals(-1, table1.getIndent());
+
+            XWPFTable table2 = doc.getTableArray(1);
+            // Valid indent value with type dxa
+            assertEquals(732, table2.getIndent());
+
+            XWPFTable table3 = doc.getTableArray(2);
+            // Indent is of type "nil"
+            assertEquals(0, table3.getIndent());
+
+            XWPFTable table4 = doc.getTableArray(3);
+            // Indent is of type "pct" which should be ignored
+            assertEquals(-1, table4.getIndent());
+
+            XWPFTable table5 = doc.getTableArray(4);
+            // Indent is of type "auto" which should be ignored
+            assertEquals(-1, table5.getIndent());
+
+            XWPFTable table6 = doc.getTableArray(5);
+            // Valid indent value with empty type (defaults to dxa)
+            assertEquals(732, table6.getIndent());
+
+            XWPFTable table7 = doc.getTableArray(6);
+            // Valid indent value, negative values are allowed
+            assertEquals(-500, table7.getIndent());
+        }
+    }
 }

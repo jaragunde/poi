@@ -288,6 +288,30 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         return tblPr.isSetTblW() ? (int)Units.toDXA(POIXMLUnits.parseLength(tblPr.getTblW().xgetW())) : -1;
     }
 
+    public int getIndent() {
+        CTTblPr tblPr = getTblPr();
+        if (tblPr.isSetTblInd()) {
+            STTblWidth.Enum typeValue = tblPr.getTblInd().getType();
+            if (typeValue == null) {
+                // "§17.4.87: If [type] is omitted, then its value shall be assumed to be dxa"
+                typeValue = STTblWidth.DXA;
+            }
+            switch (typeValue.intValue()) {
+                case STTblWidth.INT_NIL:
+                    // "§17.18.90: [nil] Specifies that the current width is zero, regardless of
+                    // any width value specified on the parent element"
+                    return 0;
+                case STTblWidth.INT_DXA:
+                    return (int) Units.toDXA(POIXMLUnits.parseLength(tblPr.getTblInd().xgetW()));
+                case STTblWidth.INT_PCT:
+                case STTblWidth.INT_AUTO:
+                    // "§17.4.50: Any width value of type pct or auto for this element shall be ignored"
+                    return -1;
+            }
+        }
+        return -1;
+    }
+
     /**
      * Set the width in 20ths of a point (twips).
      * @param width Width value (20ths of a point)
