@@ -621,4 +621,17 @@ class TestXWPFTable {
             assertEquals(-500, table7.getIndent());
         }
     }
+
+    @Test
+    void testSetGetTableIndent() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFTable tbl = doc.createTable(1, 1);
+            tbl.setIndent(100);
+            assertEquals(100, tbl.getIndent());
+            tbl.setIndent(0);
+            assertEquals(0, tbl.getIndent());
+            tbl.setIndent(-100);
+            assertEquals(-100, tbl.getIndent());
+        }
+    }
 }

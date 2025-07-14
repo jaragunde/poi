@@ -326,6 +326,18 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     }
 
     /**
+     * Set the indentation in 20ths of a point (twips).
+     * @see int getIndent()
+     * @param indent Indentation value (20ths of a point)
+     */
+    public void setIndent(int indent) {
+        CTTblPr tblPr = getTblPr();
+        CTTblWidth tblInd = tblPr.isSetTblInd() ? tblPr.getTblInd() : tblPr.addNewTblInd();
+        tblInd.setW(new BigInteger(Integer.toString(indent)));
+        tblInd.setType(STTblWidth.DXA);
+    }
+
+    /**
      * Set the width in 20ths of a point (twips).
      * @param width Width value (20ths of a point)
      */
