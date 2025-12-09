@@ -36,12 +36,8 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.sl.draw.DrawTableShape;
-import org.apache.poi.sl.usermodel.ShapeType;
-import org.apache.poi.sl.usermodel.Slide;
-import org.apache.poi.sl.usermodel.StrokeStyle;
+import org.apache.poi.sl.usermodel.*;
 import org.apache.poi.sl.usermodel.TableCell.BorderEdge;
-import org.apache.poi.sl.usermodel.TextParagraph;
-import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xslf.XSLFTestDataSamples;
@@ -362,4 +358,37 @@ class TestXSLFTable {
         }
     }
 
+    @Test
+    void testFontColorsInTable() throws IOException {
+        XMLSlideShow  ppt = XSLFTestDataSamples.openSampleDocument("table-with-different-font-colors.pptx");
+
+        XSLFSlide slide = ppt.getSlides().get(0);
+        List<XSLFShape> shapes = slide.getShapes();
+        assertEquals(1, shapes.size());
+        assertTrue(shapes.get(0) instanceof XSLFTable);
+        XSLFTable tbl = (XSLFTable)shapes.get(0);
+        assertEquals(2, tbl.getNumberOfColumns());
+        assertEquals(3, tbl.getNumberOfRows());
+        assertNotNull(tbl.getCTTable());
+
+        XSLFTableCell cellText1 = tbl.getRows().getFirst().getCells().getFirst();
+        assertEquals("Text 1", cellText1.getText());
+        PaintStyle colorText1 = cellText1.getTextParagraphs().getFirst().getTextRuns().getFirst().getFontColor();
+        assertTrue(colorText1 instanceof PaintStyle.SolidPaint);
+        assertEquals(new Color(255, 255, 0), ((PaintStyle.SolidPaint) colorText1).getSolidColor().getColor());
+
+        XSLFTableCell cellText3 = tbl.getRows().get(1).getCells().getFirst();
+        assertEquals("Text 3", cellText3.getText());
+        PaintStyle colorText3 = cellText3.getTextParagraphs().getFirst().getTextRuns().getFirst().getFontColor();
+        assertTrue(colorText3 instanceof PaintStyle.SolidPaint);
+        assertEquals(new Color(119, 119, 119), ((PaintStyle.SolidPaint) colorText3).getSolidColor().getColor());
+
+        XSLFTableCell cellText5 = tbl.getRows().get(2).getCells().getFirst();
+        assertEquals("Text 5", cellText5.getText());
+        PaintStyle colorText5 = cellText5.getTextParagraphs().getFirst().getTextRuns().getFirst().getFontColor();
+        assertTrue(colorText5 instanceof PaintStyle.SolidPaint);
+        assertEquals(new Color(0, 255, 255), ((PaintStyle.SolidPaint) colorText5).getSolidColor().getColor());
+
+        ppt.close();
+    }
 }
