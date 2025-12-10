@@ -504,10 +504,19 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
 
             int br = row + (firstRow ? 1 : 0);
             int bc = col + (firstCol ? 1 : 0);
-            if (bandRow && (br & 1) == 0) {
-                tps = TablePartStyle.band1H;
-            } else if (bandCol && (bc & 1) == 0) {
-                tps = TablePartStyle.band1V;
+            if (bandRow) {
+                if ((br & 1) == 0) {
+                    tps = TablePartStyle.band1H;
+                } else {
+                    tps = TablePartStyle.band2H;
+                }
+            }
+            if (bandCol) {
+                if ((bc & 1) == 0) {
+                    tps = TablePartStyle.band1V;
+                } else {
+                    tps = TablePartStyle.band2V;
+                }
             }
         }
 
