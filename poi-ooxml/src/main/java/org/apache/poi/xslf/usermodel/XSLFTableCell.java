@@ -510,8 +510,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
                 } else {
                     tps = TablePartStyle.band2H;
                 }
-            }
-            if (bandCol) {
+            } else if (bandCol) {
                 if ((bc & 1) == 0) {
                     tps = TablePartStyle.band1V;
                 } else {
