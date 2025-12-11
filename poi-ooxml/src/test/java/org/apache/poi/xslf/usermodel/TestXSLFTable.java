@@ -358,36 +358,58 @@ class TestXSLFTable {
         }
     }
 
+    private void verifyCellSolidFontColor(XSLFTableCell cell, String text, Color color) {
+        assertEquals(text, cell.getText());
+        PaintStyle colorText1 = cell.getTextParagraphs().getFirst().getTextRuns().getFirst().getFontColor();
+        assertTrue(colorText1 instanceof PaintStyle.SolidPaint);
+        assertEquals(color, ((PaintStyle.SolidPaint)colorText1).getSolidColor().getColor());
+    }
+
     @Test
     void testFontColorsInTable() throws IOException {
         XMLSlideShow  ppt = XSLFTestDataSamples.openSampleDocument("table-with-different-font-colors.pptx");
 
-        XSLFSlide slide = ppt.getSlides().get(0);
-        List<XSLFShape> shapes = slide.getShapes();
+        // First slide: test row-related table styles
+
+        List<XSLFShape> shapes = ppt.getSlides().get(0).getShapes();
         assertEquals(1, shapes.size());
         assertTrue(shapes.get(0) instanceof XSLFTable);
         XSLFTable tbl = (XSLFTable)shapes.get(0);
-        assertEquals(2, tbl.getNumberOfColumns());
-        assertEquals(3, tbl.getNumberOfRows());
+        assertEquals(4, tbl.getNumberOfColumns());
+        assertEquals(4, tbl.getNumberOfRows());
         assertNotNull(tbl.getCTTable());
 
-        XSLFTableCell cellText1 = tbl.getRows().getFirst().getCells().getFirst();
-        assertEquals("Text 1", cellText1.getText());
-        PaintStyle colorText1 = cellText1.getTextParagraphs().getFirst().getTextRuns().getFirst().getFontColor();
-        assertTrue(colorText1 instanceof PaintStyle.SolidPaint);
-        assertEquals(new Color(255, 255, 0), ((PaintStyle.SolidPaint) colorText1).getSolidColor().getColor());
+        // Yellow font color due to "first row" table style
+        verifyCellSolidFontColor(tbl.getRows().getFirst().getCells().getFirst(), "Text 1", new Color(255, 255, 0));
+        // Dark green font color due to direct format
+        verifyCellSolidFontColor(tbl.getRows().getFirst().getCells().get(2), "Text 3", new Color(0, 176, 80));
+        // Grey font color due to "even row" table style + fallback
+        verifyCellSolidFontColor(tbl.getRows().get(1).getCells().getFirst(), "Text 5", new Color(119, 119, 119));
+        // Light blue font color due to "odd row" table style
+        verifyCellSolidFontColor(tbl.getRows().get(2).getCells().getFirst(), "Text 9", new Color(0, 255, 255));
+        // Red font color due to direct format
+        verifyCellSolidFontColor(tbl.getRows().get(2).getCells().get(2), "Text 11", new Color(255, 0, 0));
+        // Blue font color due to "last row" table style
+        verifyCellSolidFontColor(tbl.getRows().get(3).getCells().getFirst(), "Text 13", new Color(0, 0, 255));
 
-        XSLFTableCell cellText3 = tbl.getRows().get(1).getCells().getFirst();
-        assertEquals("Text 3", cellText3.getText());
-        PaintStyle colorText3 = cellText3.getTextParagraphs().getFirst().getTextRuns().getFirst().getFontColor();
-        assertTrue(colorText3 instanceof PaintStyle.SolidPaint);
-        assertEquals(new Color(119, 119, 119), ((PaintStyle.SolidPaint) colorText3).getSolidColor().getColor());
+        // Second slide: test column-related table styles
 
-        XSLFTableCell cellText5 = tbl.getRows().get(2).getCells().getFirst();
-        assertEquals("Text 5", cellText5.getText());
-        PaintStyle colorText5 = cellText5.getTextParagraphs().getFirst().getTextRuns().getFirst().getFontColor();
-        assertTrue(colorText5 instanceof PaintStyle.SolidPaint);
-        assertEquals(new Color(0, 255, 255), ((PaintStyle.SolidPaint) colorText5).getSolidColor().getColor());
+        shapes = ppt.getSlides().get(1).getShapes();
+        assertEquals(1, shapes.size());
+        assertTrue(shapes.get(0) instanceof XSLFTable);
+        tbl = (XSLFTable)shapes.get(0);
+        assertEquals(4, tbl.getNumberOfColumns());
+        assertEquals(4, tbl.getNumberOfRows());
+        assertNotNull(tbl.getCTTable());
+
+        // Green font color due to "first column" table style
+        verifyCellSolidFontColor(tbl.getRows().getFirst().getCells().getFirst(), "Text 1", new Color(0, 255, 0));
+        // Grey font color due to "even column" table style + fallback
+        verifyCellSolidFontColor(tbl.getRows().getFirst().getCells().get(1), "Text 2", new Color(119, 119, 119));
+        // Light blue font color due to "odd column" table style
+        verifyCellSolidFontColor(tbl.getRows().getFirst().getCells().get(2), "Text 3", new Color(0, 255, 255));
+        // Red font color due to "last column" table style
+        verifyCellSolidFontColor(tbl.getRows().getFirst().getCells().get(3), "Text 4", new Color(255, 0, 0));
 
         ppt.close();
     }
