@@ -438,7 +438,8 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         }
 
         CTTablePartStyle tps = getTablePartStyle(null);
-        if (tps == null || !tps.isSetTcStyle()) {
+        if (tps == null || !tps.isSetTcStyle() ||
+                (!tps.getTcStyle().isSetFill() && !tps.getTcStyle().isSetFillRef())) {
             tps = getTablePartStyle(TablePartStyle.wholeTbl);
             if (tps == null || !tps.isSetTcStyle()) {
                 return null;
