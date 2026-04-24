@@ -147,4 +147,20 @@ class TestDrawPictureShape {
         assertEquals(Transparency.TRANSLUCENT, img.getTransparency());
         assertEquals(color, new Color(img.getRGB(0, 0), true));
     }
+
+    @Test
+    void testCroppedTo0PictureShape() throws IOException {
+        SlideShow<?, ?> ss = openSampleDocument("croppedTo0.pptx");
+        Slide<?, ?> slide = ss.getSlides().get(0);
+        for (Shape<?,?> shape : slide.getShapes()) {
+            if (shape instanceof PictureShape) {
+                PictureShape<?,?> picShape = (PictureShape<?,?>)shape;
+                assertNotNull(picShape);
+                BufferedImage img = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_ARGB);
+                new DrawPictureShape(picShape).draw(img.createGraphics());
+                // assert it doesn't crash?
+                assertEquals(new Color(0, 0, 0, 0), new Color(img.getRGB(0, 0), true));
+            }
+        }
+    }
 }

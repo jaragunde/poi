@@ -54,6 +54,9 @@ public class DrawPictureShape extends DrawSimpleShape {
         Rectangle2D anchor = getAnchor(graphics, ps);
         Insets insets = ps.getClipping();
         int alpha = ps.getAlpha();
+        if (anchor.width == 0 || anchor.height == 0) {
+            return;
+        }
 
         PictureData[] pics = { ps.getAlternativePictureData(), ps.getPictureData() };
         for (PictureData data : pics) {
