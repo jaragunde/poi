@@ -27,11 +27,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.common.usermodel.PictureType;
@@ -420,6 +423,48 @@ class TestXWPFRun {
         assertEquals(BreakType.COLUMN, xmlRun.getBreak(0));
         assertEquals(BreakType.TEXT_WRAPPING, xmlRun.getBreak(1));
         assertNull(xmlRun.getBreak(2));
+    }
+
+    @Test
+    void testGetBreaks() {
+        XWPFRun run = new XWPFRun(CTR.Factory.newInstance(), irb);
+        assertEquals(Collections.emptyList(), run.getBreaks());
+
+        run.setText("TEXT1");
+        assertEquals(Collections.emptyList(), run.getBreaks());
+
+        // breaks are returned in document order, ignoring other run content
+        run.addBreak(BreakType.PAGE);
+        run.setText("TEXT2");
+        run.addTab();
+        run.addBreak();
+        run.setText("TEXT3");
+        run.addBreak(BreakType.COLUMN);
+        run.addBreak(BreakClear.LEFT);
+        List<BreakType> expected = Arrays.asList(
+            BreakType.PAGE, BreakType.TEXT_WRAPPING, BreakType.COLUMN, BreakType.TEXT_WRAPPING);
+        List<BreakType> breaks = run.getBreaks();
+        assertEquals(expected, breaks);
+        assertEquals(run.getNumberOfBreaks(), breaks.size());
+        for (int i = 0; i < breaks.size(); i++) {
+            assertEquals(run.getBreak(i), breaks.get(i));
+        }
+
+        // the list is unmodifiable and does not follow later changes to the run
+        assertThrows(UnsupportedOperationException.class, () -> breaks.add(BreakType.PAGE));
+        assertThrows(UnsupportedOperationException.class, () -> breaks.set(0, BreakType.COLUMN));
+        assertThrows(UnsupportedOperationException.class, () -> breaks.remove(0));
+        run.addBreak(BreakType.PAGE);
+        assertEquals(expected, breaks);
+        assertEquals(5, run.getBreaks().size());
+
+        // breaks created directly in the XML
+        XWPFRun xmlRun = new XWPFRun(CTR.Factory.newInstance(), irb);
+        CTR ctr = xmlRun.getCTR();
+        ctr.addNewBr();
+        ctr.addNewT().setStringValue("T1");
+        ctr.addNewBr().setType(STBrType.PAGE);
+        assertEquals(Arrays.asList(BreakType.TEXT_WRAPPING, BreakType.PAGE), xmlRun.getBreaks());
     }
 
     /**

@@ -1262,7 +1262,45 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         if (pos < 0 || pos >= run.sizeOfBrArray()) {
             return null;
         }
-        STBrType.Enum type = run.getBrArray(pos).getType();
+        return toBreakType(run.getBrArray(pos));
+    }
+
+    /**
+     * Get the types of all the breaks in the run content.
+     * <p>
+     * The types are returned in the same order as the breaks are stored in
+     * the run, so the element at position {@code i} is the same as
+     * {@link #getBreak(int) getBreak(i)}. As with {@link #getBreak(int)}, the
+     * list only contains breaks: it does not tell where each break is placed
+     * relative to the text of the run.
+     * </p>
+     * <p>
+     * Breaks that do not specify a type are returned as
+     * {@link BreakType#TEXT_WRAPPING}, as that is the default value defined
+     * by the specification.
+     * </p>
+     * <p>
+     * The returned list is unmodifiable, and it is not updated when breaks
+     * are later added to the run.
+     * </p>
+     *
+     * @return an unmodifiable list with the types of the breaks in this run,
+     *  which is empty if the run contains no breaks
+     * @see #getBreak(int)
+     * @see #getNumberOfBreaks()
+     * @since 6.1.0
+     */
+    public List<BreakType> getBreaks() {
+        CTBr[] breaks = run.getBrArray();
+        List<BreakType> types = new ArrayList<>(breaks.length);
+        for (CTBr br : breaks) {
+            types.add(toBreakType(br));
+        }
+        return Collections.unmodifiableList(types);
+    }
+
+    private static BreakType toBreakType(CTBr br) {
+        STBrType.Enum type = br.getType();
         return type == null ? BreakType.TEXT_WRAPPING : BreakType.valueOf(type.intValue());
     }
 
